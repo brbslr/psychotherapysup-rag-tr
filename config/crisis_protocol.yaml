@@ -1,0 +1,74 @@
+# ============================================================
+# KRİZ PROTOKOLÜ  —  KLİNİK İNCELEME GEREKLİ
+# ============================================================
+# Bu dosya bir klinisyen tarafından yazılmamıştır.
+# Ortak klinik sorumlu (Yeditepe Üniversitesi mezunu) tarafından
+# gözden geçirilmeli, genişletilmeli ve onaylanmalıdır.
+# Onaylayan ve tarih alanları doldurulmadan bu sistem
+# gerçek kullanıcılara açılmamalıdır.
+# ------------------------------------------------------------
+
+meta:
+  reviewed_by: "BEKLENİYOR"        # örn. "Uzm. Psk. Ad Soyad"
+  review_date: "BEKLENİYOR"        # örn. "2026-01-15"
+  version: "0.1-draft"
+
+# Kritik: AI tamamen durur, kullanıcıya yalnızca bu mesaj gösterilir.
+critical:
+  keywords:
+    - "intihar"
+    - "kendimi öldür"
+    - "kendime zarar"
+    - "canıma kıy"
+    - "yaşamak istemiyorum"
+    - "ölmek istiyorum"
+    - "ölmeyi düşün"
+    - "hayatıma son"
+    - "bileklerimi kes"
+    - "son vermek istiyorum"
+  message: |
+    Söylediklerini ciddiye alıyorum ve şu an yanında gerçek bir insanın
+    olması önemli.
+
+    Lütfen hemen **112**'yi ara. Türkiye'de 112 acil çağrı merkezidir ve
+    psikiyatrik acil durumlar için de kullanılır.
+
+    {ek_kaynaklar}
+
+    Bu bir yapay zekâ aracıdır ve acil durumlarda yeterli değildir.
+    Şu an güvende değilsen lütfen 112'yi ara veya güvendiğin birine ulaş.
+
+# Yüksek: AI devam eder ama nazikçe profesyonel desteğe yönlendirir,
+# ve oturum "klinik inceleme" için işaretlenir.
+high:
+  keywords:
+    - "ona zarar vermek istiyorum"
+    - "şiddet görüyorum"
+    - "dövüyor"
+    - "taciz"
+    - "istismar"
+    - "dayak"
+  message: |
+    Anlattıkların için teşekkür ederim. Bu tür durumlar için yalnız
+    kalmaman çok önemli. Bir uzmanla konuşmanı öneririm.
+
+    {ek_kaynaklar}
+
+# Olumsuzlama ipuçları: anahtar kelimeden sonra bu ifadeler
+# geliyorsa şiddet seviyesi bir kademe düşürülür.
+# (örn. "intihar etmeyi düşünmüyorum")
+negation_cues:
+  - "düşünmüyorum"
+  - "istemiyorum"
+  - "etmem"
+  - "yapmam"
+  - "değil"
+  - "yok"
+  - "aklımdan bile geç"
+  - "hayır"
+
+# Partner tarafından doğrulanmış yerel kaynaklar buraya.
+# UYDURMA NUMARA YAZMAYIN — yalnızca teyit edilmiş kaynakları ekleyin.
+ek_kaynaklar: |
+  [Buraya doğrulanmış yerel kaynaklar eklenecek — örn. il sağlık
+   müdürlüğü psikiyatri birimi, üniversite psikolojik danışma merkezi]
