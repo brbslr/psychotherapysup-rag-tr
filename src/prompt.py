@@ -25,8 +25,9 @@ yönlendirmektir.
 """
 
 NO_CONTEXT_REPLY = (
-    "Bu konuda elimde güvenilir bir bilgi yok, bu yüzden tahmin yürütmek "
-    "istemiyorum. İstersen bu konuyu bir ruh sağlığı uzmanıyla konuşabilirsin."
+   "_(Demo modu — sistem bu soru için uygun bir kaynak bulamadı. "
+   "Bu genellikle bilgi tabanının boş olduğu veya sorunun kapsam dışı "
+   "olduğu anlamına gelir.)_"
 )
 
 

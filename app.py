@@ -29,7 +29,15 @@ except Exception:  # noqa: BLE001
 
 @st.cache_resource
 def load_engine():
-    return WellnessEngine(get_settings())
+    from src.ingest import load_markdown_dir, write_local_index
+    from src.config import get_settings
+
+    s = get_settings()
+    if not s.local_index_path.exists():
+        with st.spinner("Bilgi tabanı hazırlanıyor..."):
+            passages = load_markdown_dir(s.clinical_docs_dir)
+            write_local_index(passages, s.local_index_path)
+    return WellnessEngine(s)
 
 
 engine = load_engine()
