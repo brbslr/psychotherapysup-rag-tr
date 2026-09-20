@@ -162,8 +162,11 @@ for msg in st.session_state.messages:
         st.markdown(msg["content"])
         if msg.get("sources"):
             with st.expander(f"📚 Kaynaklar ({len(msg['sources'])})"):
-                for s in msg["sources"]:
-                    st.caption(f"• {s.heading_path or s.title or s.source} — skor {s.score:.3f}")
+                for i, s in enumerate(msg["sources"], start=1):
+                    st.markdown(f"**[{i}] {s.heading_path or s.title or s.source}** — skor `{s.score:.3f}`")
+                    st.markdown(s.content)
+                    if i < len(msg["sources"]):
+                        st.divider()
 
 # ── Giriş ────────────────────────────────────────────────────────
 if prompt := st.chat_input("Nasıl hissediyorsun?"):
@@ -194,8 +197,11 @@ if prompt := st.chat_input("Nasıl hissediyorsun?"):
 
         if reply.sources:
             with st.expander(f"📚 Kaynaklar ({len(reply.sources)})"):
-                for s in reply.sources:
-                    st.caption(f"• {s.heading_path or s.title or s.source} — skor {s.score:.3f}")
+                for i, s in enumerate(reply.sources, start=1):
+                    st.markdown(f"**[{i}] {s.heading_path or s.title or s.source}** — skor `{s.score:.3f}`")
+                    st.markdown(s.content)
+                    if i < len(reply.sources):
+                        st.divider()
 
         if reply.degraded:
             st.caption("⚠️ Bazı bileşenler geçici olarak kullanılamıyor.")

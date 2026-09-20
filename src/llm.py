@@ -11,6 +11,14 @@ from .prompt import NO_CONTEXT_REPLY, SYSTEM_PROMPT, build_user_prompt
 log = logging.getLogger(__name__)
 
 
+import re
+
+# Match the blank line that precedes the next "[N] " block marker.
+# This is the ONLY reliable way to separate blocks because content
+# itself may contain blank lines.
+_BLOCK_START = re.compile(r"\n\n(?=\[\d+\]\s)")
+
+
 class EchoLLM:
     """LLM yok. Yalnızca en alakalı kaynak pasajını döndürür.
 
@@ -24,12 +32,20 @@ class EchoLLM:
     def generate(self, context: str, question: str, history: list[dict]) -> str:
         if not context or context.strip() == "(boş)":
             return NO_CONTEXT_REPLY
-        first = context.split("\n\n")[0]
-        body = "\n".join(first.split("\n")[1:]).strip()
+
+        # Split at the block boundary (blank line + "[N] "), not at every
+        # blank line inside the content.
+        first_block = _BLOCK_START.split(context, maxsplit=1)[0]
+
+        # First line is "[N] label". Everything after is the heading path
+        # (from hierarchical chunking) plus the actual body text.
+        _, _, body = first_block.partition("\n")
+        body = body.strip() or first_block.strip()
+
         return (
             "_(Demo modu — dil modeli kapalı. Aşağıdaki metin, sistemin "
             "klinik dokümanlarınızdan bulduğu en alakalı bölümdür.)_\n\n"
-            f"{body[:700]}"
+            f"{body[:900]}"
         )
 
 
