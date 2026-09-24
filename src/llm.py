@@ -18,6 +18,83 @@ import re
 # itself may contain blank lines.
 _BLOCK_START = re.compile(r"\n\n(?=\[\d+\]\s)")
 
+from openai import OpenAI
+from .retry import retry_on_service_unavailable
+
+class GeminiLLM:
+    """Google Gemini via the OpenAI-compatible endpoint.
+
+    This reuses the `openai` package already in requirements.txt —
+    just point the base_url at Google's endpoint and use your
+    Gemini API key instead of an OpenAI key.
+    """
+
+    name = "gemini"
+
+    def __init__(self, settings: Settings) -> None:
+        self.s = settings
+        self.client = OpenAI(
+            api_key=settings.gemini_api_key,
+            base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+        )
+        
+
+    def generate(self, context: str, question: str, history: list[dict]) -> str:
+        messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+        messages += history[-6:]
+        messages.append(
+            {"role": "user", "content": build_user_prompt(context, question)}
+        )
+
+        resp = self.client.chat.completions.create(
+            model=self.s.gemini_model,
+            messages=messages,
+            temperature=self.s.temperature,
+            max_tokens=self.s.max_tokens,
+        )
+
+        last_error = None
+        for model_name in self.model_chain:
+            try:
+                log.info(f"Attempting generation with model: {model_name}")
+                answer = self._call_model(model_name, messages)
+                if not answer or not answer.rstrip().endswith((".", "!", "?", "…", ":")):
+                    log.warning(
+                        f"Response may be truncated (no terminal punctuation). "
+                        f"Model={model_name}, length={len(answer)}"
+                    )
+                return answer
+            except APIStatusError as e:
+                log.warning(f"Model {model_name} failed after retries: {e}")
+                last_error = e
+                continue
+        
+        raise last_error
+        return (resp.choices[0].message.content or "").strip()
+
+    @retry_on_service_unavailable(max_attempts=5) # <-- Apply decorator
+    def generate(self, context: str, question: str, history: list[dict]) -> str:
+        messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+        messages += history[-6:]
+        messages.append({"role": "user", "content": build_user_prompt(context, question)})
+
+        resp = self.client.chat.completions.create(
+            model=self.s.gemini_model,
+            messages=messages,
+            temperature=self.s.temperature,
+            max_tokens=self.s.max_tokens,
+        )
+        return (resp.choices[0].message.content or "").strip()
+
+    def _call_model(self, model_name: str, messages: list) -> str:
+        resp = self.client.chat.completions.create(
+            model=model_name,
+            messages=messages,
+            temperature=self.s.temperature,
+            max_tokens=self.s.max_tokens,
+            extra_body={"reasoning_effort": "low"},
+        )
+        return (resp.choices[0].message.content or "").strip()
 
 class EchoLLM:
     """LLM yok. Yalnızca en alakalı kaynak pasajını döndürür.
@@ -102,12 +179,32 @@ class AzureLLM:
         )
         return (resp.choices[0].message.content or "").strip()
 
+    @retry_on_service_unavailable(max_attempts=5) # <-- Apply decorator
+    def generate(self, context: str, question: str, history: list[dict]) -> str:
+        # ... (the rest of your generate method)
+        messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+        messages += history[-6:]
+        messages.append({"role": "user", "content": build_user_prompt(context, question)})
+
+        resp = self.client.chat.completions.create(
+            model=self.s.azure_openai_chat_deployment,
+            messages=messages,
+            temperature=self.s.temperature,
+            max_tokens=self.s.max_tokens,
+        )
+        return (resp.choices[0].message.content or "").strip()
+
 
 def build_llm(settings: Settings):
+    if settings.llm_provider == "gemini":
+        if not settings.gemini_api_key:
+            log.warning("GEMINI_API_KEY boş — echo moduna düşülüyor")
+            return EchoLLM()
+        return GeminiLLM(settings)
     if settings.llm_provider == "azure":
         try:
             return AzureLLM(settings)
-        except Exception:  # noqa: BLE001
+        except Exception:
             log.exception("Azure LLM kurulamadı — echo moduna düşülüyor")
     if settings.llm_provider == "ollama":
         return OllamaLLM(settings)

@@ -25,11 +25,11 @@ class Settings(BaseSettings):
     clinical_docs_dir: Path = ROOT / "docs" / "clinical"
 
     # LLM
-    llm_provider: Literal["echo", "ollama", "azure"] = "echo"
+    llm_provider: Literal["echo", "ollama", "azure", "gemini", "vertex_tuned"] = "echo"
     ollama_base_url: str = "http://localhost:11434"
     ollama_model: str = "llama3.1:8b"
     temperature: float = 0.3
-    max_tokens: int = 500
+    max_tokens: int = 2000
 
     # Azure AI Search
     azure_search_endpoint: str = ""
@@ -38,6 +38,11 @@ class Settings(BaseSettings):
     azure_search_analyzer: str = "tr.microsoft"
     azure_search_use_semantic: bool = False
     azure_search_semantic_config: str = "default-semantic"
+
+    # Gemini
+    gemini_api_key: str = "AQ.Ab8RN6J-Uup0bBHIkCncPmTCutm71WPLdhT29dTYvywoIrBhmw"
+    gemini_model: str = "gemini-3.8-flash"
+    
 
     # Azure OpenAI
     azure_openai_endpoint: str = ""

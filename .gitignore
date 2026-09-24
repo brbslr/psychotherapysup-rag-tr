@@ -7,3 +7,5 @@ logs/
 .venv/
 venv/
 *.pdf
+GEMINI_API_KEY=AQ.Ab8RN6J-Uup0bBHIkCncPmTCutm71WPLdhT29dTYvywoIrBhmw
+GEMINI_MODEL=gemini-3.8-flash
