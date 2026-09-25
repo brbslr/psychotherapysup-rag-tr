@@ -1,4 +1,4 @@
-"""Wellness Asistan — Streamlit arayüzü (Türkçe).
+"""Psikolojik Destek Asistan — Streamlit arayüzü (Türkçe).
 
 Streamlit Community Cloud'da ücretsiz yayınlanabilir.
 Secrets yönetimi için: .streamlit/secrets.toml veya .env
@@ -11,7 +11,7 @@ from src.config import get_settings
 from src.engine import WellnessEngine
 
 st.set_page_config(
-    page_title="Wellness Asistan",
+    page_title="Psikolojik Destek Asistan",
     page_icon="🌱",
     layout="centered",
     initial_sidebar_state="expanded",
@@ -53,7 +53,7 @@ if "crisis_locked" not in st.session_state:
 
 # ── Kenar çubuğu ─────────────────────────────────────────────────
 with st.sidebar:
-    st.markdown("### 🌱 Wellness Asistan")
+    st.markdown("### 🌱 Psikolojik Destek Asistan")
     mode_label = {
         ("local", "echo"): "🟢 Ücretsiz demo (LLM kapalı)",
         ("local", "ollama"): "🟢 Yerel model (ücretsiz)",
@@ -102,8 +102,8 @@ kaydedilir.
         )
 
 # ── Başlık ───────────────────────────────────────────────────────
-st.title("🌱 Wellness Asistan")
-st.caption("Günlük stres ve kaygı için destekleyici bir araç. Terapi değildir.")
+st.title("🌱 Psikolojik Destek Asistan")
+st.caption("Günlük psikoloji destekleyici bir araç. Psikoterapi değildir.")
 
 # ── KVKK açık rıza kapısı ────────────────────────────────────────
 if not st.session_state.consent:

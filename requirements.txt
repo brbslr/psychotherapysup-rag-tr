@@ -9,3 +9,4 @@ azure-search-documents>=11.6.0
 azure-ai-documentintelligence>=1.0.0
 openai>=1.40
 pytest>=8.0
+google-genai>=1.0.0
