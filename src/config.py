@@ -40,9 +40,9 @@ class Settings(BaseSettings):
     azure_search_semantic_config: str = "default-semantic"
 
     # Gemini
-    gemini_api_key: str = "AQ.Ab8RN6Kj3HZyLff3VY-YYQmVNBnqhWbDb96wC1-yGysC6GiBSQ"
-    gemini_model: str = "gemini-3.8-flash"
-    gemini_fallback_model: str = "gemini-3.6-flash"
+    gemini_api_key: str = "AQ.Ab8RN6IzUEnFnjRT71WWN1TsMcvVooR1zjN6vMWNd4QEve3RLg"
+    gemini_model: str = "gemini-3.6-flash"
+    gemini_fallback_model: str = "gemini-3.5-flash-lite"
 
     # Azure OpenAI
     azure_openai_endpoint: str = ""
