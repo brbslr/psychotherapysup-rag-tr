@@ -40,7 +40,7 @@ class Settings(BaseSettings):
     azure_search_semantic_config: str = "default-semantic"
 
     # Gemini
-    gemini_api_key: str = "AQ.Ab8RN6IC1G2ApAugyOlnDW-4EZ-KGIhFeWMwJNk-B2Dnl61SyQ"
+    gemini_api_key: str = 
     gemini_model: str = "gemini-3.6-flash"
     gemini_fallback_model: str = "gemini-3.5-flash-lite"
 
