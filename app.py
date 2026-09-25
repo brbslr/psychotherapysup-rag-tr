@@ -106,8 +106,8 @@ with st.sidebar:
 **Nedir:** Günlük stres ve kaygı ile baş etmeye yönelik, psikoeğitim
 bilgileri paylaşan bir iyi oluş aracı.
 
-**Ne değildir:** Terapi değildir. Teşhis koymaz. İlaç önermez.
-Bir terapistin yerini almaz.
+**Ne değildir:** Psikoterapi değildir. Teşhis koymaz. İlaç önermez.
+Bir Psikoloğun yerini almaz.
 
 **Verileriniz:** Mesajlarınızdaki isim, telefon, e-posta, TC kimlik
 numarası gibi tanımlayıcılar gönderilmeden önce otomatik olarak
@@ -231,7 +231,7 @@ if prompt := st.chat_input("Nasıl hissediyorsun?"):
 
 st.divider()
 st.caption(
-    "Bu araç terapi değildir, teşhis koymaz. Acil durumda 112'yi arayın. "
+    "Bu araç Psikoterapi değildir, teşhis koymaz. Acil durumda 112'yi arayın. "
     "Klinik sorumlu: [ad] — Protokol sürümü: "
     f"{engine.crisis.protocol.get('meta', {}).get('version', '-')}"
 )
