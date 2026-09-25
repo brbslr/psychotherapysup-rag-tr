@@ -17,14 +17,29 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# ── Secrets → env köprüsü (Streamlit Cloud için) ─────────────────
-try:
-    for k, v in st.secrets.items():  # type: ignore[union-attr]
-        import os
+import os
+import logging
 
-        os.environ.setdefault(k.upper(), str(v))
-except Exception:  # noqa: BLE001
-    pass
+log = logging.getLogger(__name__)
+
+# ── Bridge Streamlit secrets into environment variables ──────────────
+# Uses direct assignment, NOT setdefault, so Streamlit's secrets always win.
+# Logs the outcome so failures are visible in the app logs.
+try:
+    secret_keys = list(st.secrets.keys())
+    log.info("Streamlit secrets loaded: %d keys", len(secret_keys))
+    for k, v in st.secrets.items():
+        if isinstance(v, bool):
+            os.environ[k.upper()] = "true" if v else "false"
+        else:
+            os.environ[k.upper()] = str(v)
+    if "GEMINI_API_KEY" in os.environ:
+        key = os.environ["GEMINI_API_KEY"]
+        log.info("GEMINI_API_KEY set: %s...", key[:8] if key else "(empty)")
+    else:
+        log.error("GEMINI_API_KEY NOT found in environment after bridging")
+except Exception as e:
+    log.exception("Failed to bridge Streamlit secrets into environment: %s", e)
 
 
 @st.cache_resource
