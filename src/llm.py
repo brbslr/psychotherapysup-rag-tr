@@ -20,7 +20,6 @@ _BLOCK_START = re.compile(r"\n\n(?=\[\d+\]\s)")
 
 from openai import OpenAI
 from .retry import retry_on_service_unavailable
-
 class GeminiLLM:
     name = "gemini"
 
@@ -95,6 +94,8 @@ class EchoLLM:
 
 
 class OllamaLLM:
+    """Yerel, ücretsiz LLM. https://ollama.com → `ollama pull qwen2.5:7b`"""
+
     name = "ollama"
 
     def __init__(self, settings: Settings) -> None:
@@ -109,7 +110,9 @@ class OllamaLLM:
 
         headers = {
             "Content-Type": "application/json",
-            "ngrok-skip-browser-warning": "true",   # ← bypass interstitial page
+            # Required when Ollama is reached through an ngrok tunnel.
+            # Harmless when connecting directly to localhost.
+            "ngrok-skip-browser-warning": "true",
         }
 
         resp = requests.post(
@@ -119,13 +122,15 @@ class OllamaLLM:
                 "model": self.s.ollama_model,
                 "messages": messages,
                 "stream": False,
-                "options": {"temperature": self.s.temperature},
+                "options": {
+                    "temperature": self.s.temperature,
+                    "num_predict": self.s.max_tokens,
+                },
             },
             timeout=120,
         )
         resp.raise_for_status()
-        raw = resp.json()["message"]["content"]
-        return clean_model_output(raw)
+        return (resp.json()["message"]["content"] or "").strip()
 
 class AzureLLM:
     name = "azure"
