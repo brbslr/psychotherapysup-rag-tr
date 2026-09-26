@@ -95,8 +95,6 @@ class EchoLLM:
 
 
 class OllamaLLM:
-    """Yerel, ücretsiz LLM. https://ollama.com → `ollama pull llama3.1:8b`"""
-
     name = "ollama"
 
     def __init__(self, settings: Settings) -> None:
@@ -105,10 +103,18 @@ class OllamaLLM:
     def generate(self, context: str, question: str, history: list[dict]) -> str:
         messages = [{"role": "system", "content": SYSTEM_PROMPT}]
         messages += history[-6:]
-        messages.append({"role": "user", "content": build_user_prompt(context, question)})
+        messages.append(
+            {"role": "user", "content": build_user_prompt(context, question)}
+        )
+
+        headers = {
+            "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "true",   # ← bypass interstitial page
+        }
 
         resp = requests.post(
             f"{self.s.ollama_base_url}/api/chat",
+            headers=headers,
             json={
                 "model": self.s.ollama_model,
                 "messages": messages,
@@ -118,8 +124,8 @@ class OllamaLLM:
             timeout=120,
         )
         resp.raise_for_status()
-        return resp.json()["message"]["content"].strip()
-
+        raw = resp.json()["message"]["content"]
+        return clean_model_output(raw)
 
 class AzureLLM:
     name = "azure"
